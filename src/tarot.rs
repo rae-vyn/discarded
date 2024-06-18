@@ -2,6 +2,7 @@ use std::collections::VecDeque;
 use rand::prelude::*;
 use strum::EnumIter;
 use strum::IntoEnumIterator;
+use roman;
 
 #[derive(Debug, EnumIter, Clone, Copy)]
 pub enum MajorArcana {
@@ -144,8 +145,12 @@ impl TarotCard {
     fn string(&self) -> String {
         match *self {
             Self::GreaterSecret { arcana } => {
+                let roman = match arcana {
+                    MajorArcana::TheFool => "0".to_string(),
+                    _ => roman::to(arcana as i32).unwrap()
+                };
                 let formatted = format!("{:?}", arcana);
-                camel_case_split(formatted)
+                format!("{} [{}]", camel_case_split(formatted), roman)
             }
             Self::LesserSecret { suit, value } => match value {
                 MinorArcanaCardType::Number(val) => format!("{:?} of {:?}", val, suit),
@@ -162,10 +167,7 @@ fn camel_case_split(s: String) -> String {
         })
         .collect::<Vec<String>>()
         .join("")
-        .split("_")
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>()
-        .join(" ")
+        .replace("_", " ")
         .trim()
         .to_string()
 }

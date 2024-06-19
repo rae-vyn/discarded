@@ -162,7 +162,7 @@ impl TarotCard {
 fn camel_case_split(s: String) -> String {
     s.chars()
         .map(|ch| match ch.is_ascii_uppercase() {
-            true => format!("_{ch}").to_string().to_string(),
+            true => format!("_{ch}"),
             _ => format!("{ch}"),
         })
         .collect::<Vec<String>>()

@@ -111,5 +111,4 @@ pub fn handle(args: Args) {
             };
         }
     };
-    println!("");
 }

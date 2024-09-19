@@ -1,5 +1,5 @@
 use clap::Parser;
-use diced_plus::Args;
+use discarded::Args;
 // DICED PLUS
 // A dice roller with no bugs, only features. /j
 // TODO:
@@ -14,6 +14,6 @@ use diced_plus::Args;
 
 fn main() -> Result<(), ()> {
     let args = Args::parse();
-    diced_plus::handle(args);
+    discarded::handle(args);
     Ok(())
 }

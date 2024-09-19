@@ -161,25 +161,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "diced_plus"
-version = "0.1.0"
-dependencies = [
- "ansi_term",
- "clap",
- "confy",
- "convert_case",
- "maplit",
- "once_cell",
- "rand",
- "regex",
- "roman",
- "serde",
- "strum",
- "toml",
- "whoami",
-]
-
-[[package]]
 name = "directories"
 version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -198,6 +179,25 @@ dependencies = [
  "option-ext",
  "redox_users",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "discarded"
+version = "0.1.0"
+dependencies = [
+ "ansi_term",
+ "clap",
+ "confy",
+ "convert_case",
+ "maplit",
+ "once_cell",
+ "rand",
+ "regex",
+ "roman",
+ "serde",
+ "strum",
+ "toml",
+ "whoami",
 ]
 
 [[package]]

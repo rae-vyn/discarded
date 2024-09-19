@@ -1,4 +1,4 @@
-# Diced Plus
+# Discarded
 
 A simple CLI dice rolling tool.
 

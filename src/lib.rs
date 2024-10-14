@@ -48,9 +48,9 @@ pub enum DrawCommand {
         /// Use a deck without jokers.
         #[arg(long)]
         no_jokers: bool,
-        /// Draw destructively
+        /// Draw nondestructively
         #[arg(long)]
-        destructive: bool,
+        nondestructive: bool,
     },
     /// A 78-card tarot deck, optionally including the minor arcana.
     Tarot {
@@ -59,9 +59,9 @@ pub enum DrawCommand {
         /// Include the minor arcana.
         #[arg(long)]
         include_minor: bool,
-        /// Draw destructively
+        /// Draw nondestructively
         #[arg(long)]
-        destructive: bool,
+        nondestructive: bool,
     },
 }
 
@@ -71,7 +71,7 @@ pub fn handle(args: Args) {
             DrawCommand::Traditional {
                 amount,
                 no_jokers,
-                destructive,
+                nondestructive,
             } => {
                 let used_amount = match amount {
                     Some(val) => val,
@@ -81,7 +81,7 @@ pub fn handle(args: Args) {
                     true => Deck::deck_no_jokers(),
                     false => Deck::deck(),
                 };
-                if destructive {
+                if !nondestructive {
                     for card in used_deck.draw_destructive(used_amount) {
                         println!("{card}");
                     }
@@ -94,7 +94,7 @@ pub fn handle(args: Args) {
             DrawCommand::Tarot {
                 amount,
                 include_minor,
-                destructive,
+                nondestructive,
             } => {
                 let used_amount = match amount {
                     Some(val) => val,
@@ -105,7 +105,7 @@ pub fn handle(args: Args) {
                     true => tarot::TarotDeck::full_deck(),
                     false => tarot::TarotDeck::no_minor_deck(),
                 };
-                if destructive {
+                if !nondestructive {
                     for card in deck.draw_destructive(used_amount) {
                         println!("{card}");
                     }

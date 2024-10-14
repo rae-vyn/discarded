@@ -16,34 +16,34 @@ pub struct Die {
 
 impl fmt::Display for Die {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        return write!(f, "d{}", self.size);
+        write!(f, "d{}", self.size)
     }
 }
 
 impl Die {
     /// Create a new die using a quantity and size.
-    pub fn new(quantity: u16, size: u16, modifier: i16) -> Self {
+    #[must_use] pub fn new(quantity: u16, size: u16, modifier: i16) -> Self {
         if size < 1 {
             eprintln!("Improper Die Size {size}");
             process::exit(1);
         };
-        return Self {
+        Self {
             quantity,
             size,
             modifier,
-        };
+        }
     }
 
-    pub fn size(&self) -> u16 {
-        return self.size;
+    #[must_use] pub const fn size(&self) -> u16 {
+        self.size
     }
 
-    pub fn quantity(&self) -> u16 {
-        return self.quantity;
+    #[must_use] pub const fn quantity(&self) -> u16 {
+        self.quantity
     }
 
-    pub fn modifier(&self) -> i16 {
-        return self.modifier;
+    #[must_use] pub const fn modifier(&self) -> i16 {
+        self.modifier
     }
 }
 
@@ -57,16 +57,16 @@ fn validate(dice: Vec<String>, match_die: Regex) -> Vec<Die> {
     let mut result: Vec<Die> = vec![];
     for die in dice {
         let capture = match_die.captures(&die).unwrap_or_else(|| {
-            eprintln!("[ERR] ~> Die entered improperly: {}", die);
+            eprintln!("[ERR] ~> Die entered improperly: {die}");
             process::exit(1);
         });
         let size: u16 = capture["size"].parse().unwrap_or_else(|_| {
-            eprintln!("[ERR] ~> Die size too large: {}", die);
+            eprintln!("[ERR] ~> Die size too large: {die}");
             eprintln!("[ERR] ~> [Limit is {}]", u16::MAX);
             process::exit(1);
         });
         let quantity: u16 = capture["quantity"].parse().unwrap_or_else(|_| {
-            eprintln!("[ERR] ~> Die quantity too large: {}", die);
+            eprintln!("[ERR] ~> Die quantity too large: {die}");
             eprintln!("[ERR] ~> [Limit is {}]", u16::MAX);
             process::exit(1);
         });
@@ -80,7 +80,7 @@ fn validate(dice: Vec<String>, match_die: Regex) -> Vec<Die> {
     result
 }
 
-pub fn parse(dice: Vec<String>) -> Option<Vec<Die>> {
+#[must_use] pub fn parse(dice: Vec<String>) -> Option<Vec<Die>> {
     if let Ok(match_die) =
         /*
         - This Regex Grabs:
@@ -91,17 +91,17 @@ pub fn parse(dice: Vec<String>) -> Option<Vec<Die>> {
         Regex::new(r"(?m)(?<quantity>\d+)[d\\/](?<size>\d+)(?<modifier>[\+\-]\d+)?")
     {
         let dice = validate(dice, match_die);
-        if dice.len() == 0 {
+        if dice.is_empty() {
             eprintln!("[ERR] ~> No die passed in.");
             process::exit(1);
         };
         return Some(dice);
     };
-    return None;
+    None
 }
 
 fn die_format(x: &i16, size: &i16, color: bool) -> String {
-    let x_as_str = format!("{}", x);
+    let x_as_str = format!("{x}");
     if !color {
         return x_as_str;
     };
@@ -130,7 +130,7 @@ pub fn roll_die(die: &Die, arguments: &DiceArgs, rng: &mut ThreadRng) {
     let mut successes: u16 = 0;
     let mut failures: u16 = 0;
     let rolls: Vec<u16> = pool
-        .clone()
+        
         .into_iter()
         .map(|_| rng.gen_range(1..=die.size()))
         .collect();
@@ -139,10 +139,10 @@ pub fn roll_die(die: &Die, arguments: &DiceArgs, rng: &mut ThreadRng) {
         .into_iter()
         .inspect(|x| {
             if *x >= die.size() {
-                successes += 1
+                successes += 1;
             }
             if *x == 1 {
-                failures += 1
+                failures += 1;
             }
         })
         .map(|x| {

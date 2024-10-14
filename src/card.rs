@@ -54,24 +54,24 @@ impl Card {
             color,
         }
     }
-    pub fn color(&self) -> Color {
+    #[must_use] pub const fn color(&self) -> Color {
         self.color
     }
-    pub fn num_val(&self) -> Option<u8> {
+    #[must_use] pub const fn num_val(&self) -> Option<u8> {
         match self.face_value {
             FaceType::Number(x) => Some(x),
             _ => None,
         }
     }
-    pub fn string(&self) -> String {
+    #[must_use] pub fn string(&self) -> String {
         let face_as_string = match self.face_value {
-            FaceType::Number(x) => format!("{}", x),
+            FaceType::Number(x) => format!("{x}"),
             FaceType::BigJoker => "Big Joker".to_string(),
             FaceType::LittleJoker => "Little Joker".to_string(),
-            other => format!("{:?}", other),
+            other => format!("{other:?}"),
         };
         match self.suit {
-            Suit::None => format!("{}", face_as_string),
+            Suit::None => face_as_string,
             _ => format!("{} of {:?}", face_as_string, self.suit),
         }
     }
@@ -81,22 +81,22 @@ impl fmt::Display for Card {
         write!(f, "{}", self.string())
     }
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Deck {
     deck: VecDeque<Card>,
 }
 
 impl Deck {
-    pub fn new(deck: Vec<Card>) -> Self {
+    #[must_use] pub fn new(deck: Vec<Card>) -> Self {
         Self { deck: deck.into() }
     }
-    pub fn new_empty() -> Self {
+    #[must_use] pub fn new_empty() -> Self {
         Self {
             deck: vec![].into(),
         }
     }
-    pub fn deck() -> Deck {
-        let mut deck = Deck::new(vec![]);
+    #[must_use] pub fn deck() -> Self {
+        let mut deck = Self::new(vec![]);
         for suit in Suit::iter().take(4) {
             // All the numbers
             for i in 2..=10 {
@@ -112,8 +112,8 @@ impl Deck {
         deck.add(Card::new(FaceType::LittleJoker, Suit::None));
         deck
     }
-    pub fn deck_no_jokers() -> Deck {
-        let mut deck = Deck::new(vec![]);
+    #[must_use] pub fn deck_no_jokers() -> Self {
+        let mut deck = Self::new(vec![]);
         for suit in Suit::iter().take(4) {
             // All the numbers
             for i in 2..=10 {
@@ -133,23 +133,23 @@ impl Deck {
         Into::<Vec<Card>>::into(self.deck.clone()).pop();
     }
     pub fn filter_cards(&self, condition: fn(Card) -> bool) -> Self {
-        let mut new_deck = Deck::new(vec![]);
+        let mut new_deck = Self::new(vec![]);
         let _ = self
             .deck
             .iter()
             .inspect(|card| {
                 if condition(**card) {
-                    new_deck.add(**card)
+                    new_deck.add(**card);
                 }
             })
             .collect::<Vec<&Card>>();
         new_deck
     }
-    pub fn size(&self) -> u8 {
+    #[must_use] pub fn size(&self) -> u8 {
         self.deck.len() as u8
     }
-    pub fn draw(&self, amount: u8) -> Deck {
-        let mut new_deck = Deck::new_empty();
+    #[must_use] pub fn draw(&self, amount: u8) -> Self {
+        let mut new_deck = Self::new_empty();
         let mut rng = thread_rng();
         for _ in 0..amount {
             let &out = self.deck.iter().choose(&mut rng).unwrap();
@@ -157,9 +157,9 @@ impl Deck {
         }
         new_deck
     }
-    pub fn draw_destructive(&mut self, amount: u8) -> Deck {
+    pub fn draw_destructive(&mut self, amount: u8) -> Self {
         self.check_draw(amount);
-        let mut new_deck = Deck::new_empty();
+        let mut new_deck = Self::new_empty();
         let mut rng = thread_rng();
         for _ in 0..amount {
             let (index, &out) = self.deck.iter().enumerate().choose(&mut rng).unwrap();
@@ -168,8 +168,8 @@ impl Deck {
         }
         new_deck
     }
-    pub fn raw(&self) -> Vec<Card> {
-        self.deck.to_owned().into()
+    #[must_use] pub fn raw(&self) -> Vec<Card> {
+        self.deck.clone().into()
     }
     pub fn check_draw(&self, amount: u8) {
         if amount > self.deck.len() as u8 {

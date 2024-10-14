@@ -63,16 +63,16 @@ pub struct TarotDeck {
 }
 
 impl TarotDeck {
-    fn new() -> Self {
-        TarotDeck {
+    const fn new() -> Self {
+        Self {
             deck: VecDeque::new(),
         }
     }
     fn add(&mut self, card: TarotCard) {
         self.deck.push_back(card);
     }
-    pub fn full_deck() -> Self {
-        let mut new_deck = TarotDeck::new();
+    #[must_use] pub fn full_deck() -> Self {
+        let mut new_deck = Self::new();
         for card in MajorArcana::iter() {
             new_deck.add(TarotCard::GreaterSecret { arcana: card });
         }
@@ -89,14 +89,14 @@ impl TarotDeck {
         }
         new_deck
     }
-    pub fn no_minor_deck() -> Self {
-        let mut new_deck = TarotDeck::new();
+    #[must_use] pub fn no_minor_deck() -> Self {
+        let mut new_deck = Self::new();
         for card in MajorArcana::iter() {
             new_deck.add(TarotCard::GreaterSecret { arcana: card });
         }
         new_deck
     }
-    pub fn draw(&self, amount: u8) -> Self {
+    #[must_use] pub fn draw(&self, amount: u8) -> Self {
         let mut new_deck = Self::new();
         let mut rng = thread_rng();
         for _ in 0..amount {
@@ -146,12 +146,12 @@ impl TarotCard {
                     MajorArcana::TheFool => "0".to_string(),
                     _ => roman::to(arcana as i32).unwrap(),
                 };
-                let formatted = format!("{:?}", arcana);
+                let formatted = format!("{arcana:?}");
                 format!("{} [{}]", camel_case_split(formatted), roman)
             }
             Self::LesserSecret { suit, value } => match value {
-                MinorArcanaCardType::Number(val) => format!("{:?} of {:?}", val, suit),
-                _ => format!("{:?} of {:?}", value, suit),
+                MinorArcanaCardType::Number(val) => format!("{val:?} of {suit:?}"),
+                _ => format!("{value:?} of {suit:?}"),
             },
         }
     }
@@ -162,9 +162,8 @@ fn camel_case_split(s: String) -> String {
             true => format!("_{ch}"),
             _ => format!("{ch}"),
         })
-        .collect::<Vec<String>>()
-        .join("")
-        .replace("_", " ")
+        .collect::<String>()
+        .replace('_', " ")
         .trim()
         .to_string()
 }

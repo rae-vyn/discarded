@@ -127,7 +127,7 @@ pub fn handle(args: Args) {
             match dice {
                 Some(dice) => {
                     for die in dice {
-                        roll_die(&die, &args, &mut thread_rng())
+                        roll_die(&die, &args, &mut thread_rng());
                     }
                 }
                 None => std::process::exit(0),

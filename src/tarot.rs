@@ -1,8 +1,8 @@
-use std::collections::VecDeque;
 use rand::prelude::*;
+use roman;
+use std::collections::VecDeque;
 use strum::EnumIter;
 use strum::IntoEnumIterator;
-use roman;
 
 #[derive(Debug, EnumIter, Clone, Copy)]
 pub enum MajorArcana {
@@ -147,7 +147,7 @@ impl TarotCard {
             Self::GreaterSecret { arcana } => {
                 let roman = match arcana {
                     MajorArcana::TheFool => "0".to_string(),
-                    _ => roman::to(arcana as i32).unwrap()
+                    _ => roman::to(arcana as i32).unwrap(),
                 };
                 let formatted = format!("{:?}", arcana);
                 format!("{} [{}]", camel_case_split(formatted), roman)

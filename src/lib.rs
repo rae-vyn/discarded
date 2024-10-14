@@ -48,6 +48,9 @@ pub enum DrawCommand {
         /// Use a deck without jokers.
         #[arg(long)]
         no_jokers: bool,
+        /// Draw destructively
+        #[arg(long)]
+        destructive: bool,
     },
     /// A 78-card tarot deck, optionally including the minor arcana.
     Tarot {
@@ -56,13 +59,20 @@ pub enum DrawCommand {
         /// Include the minor arcana.
         #[arg(long)]
         include_minor: bool,
+        /// Draw destructively
+        #[arg(long)]
+        destructive: bool,
     },
 }
 
 pub fn handle(args: Args) {
     match args.command {
         Commands::Draw { drawcommand } => match drawcommand {
-            DrawCommand::Traditional { amount, no_jokers } => {
+            DrawCommand::Traditional {
+                amount,
+                no_jokers,
+                destructive,
+            } => {
                 let used_amount = match amount {
                     Some(val) => val,
                     _ => 1,
@@ -71,13 +81,20 @@ pub fn handle(args: Args) {
                     true => Deck::deck_no_jokers(),
                     false => Deck::deck(),
                 };
-                for card in used_deck.draw_destructive(used_amount) {
-                    println!("{card}");
+                if destructive {
+                    for card in used_deck.draw_destructive(used_amount) {
+                        println!("{card}");
+                    }
+                } else {
+                    for card in used_deck.draw(used_amount) {
+                        println!("{card}");
+                    }
                 }
             }
             DrawCommand::Tarot {
                 amount,
                 include_minor,
+                destructive,
             } => {
                 let used_amount = match amount {
                     Some(val) => val,
@@ -88,8 +105,14 @@ pub fn handle(args: Args) {
                     true => tarot::TarotDeck::full_deck(),
                     false => tarot::TarotDeck::no_minor_deck(),
                 };
-                for card in deck.draw_destructive(used_amount) {
-                    println!("{card}");
+                if destructive {
+                    for card in deck.draw_destructive(used_amount) {
+                        println!("{card}");
+                    }
+                } else {
+                    for card in deck.draw(used_amount) {
+                        println!("{card}");
+                    }
                 }
             }
         },

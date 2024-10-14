@@ -148,13 +148,10 @@ impl Deck {
         self.deck.len() as u8
     }
     pub fn draw(&self, amount: u8) -> Deck {
-        self.check_draw(amount);
         let mut new_deck = Deck::new_empty();
-        let mut this_deck = self.clone();
         let mut rng = thread_rng();
         for _ in 0..amount {
-            let (index, &out) = this_deck.deck.iter().enumerate().choose(&mut rng).unwrap();
-            this_deck.deck.remove(index);
+            let &out = self.deck.iter().choose(&mut rng).unwrap();
             new_deck.add(out);
         }
         new_deck

@@ -112,7 +112,7 @@ fn die_format(x: &i16, size: &i16, color: bool) -> String {
     }
 }
 
-pub fn roll_die(die: &Die, arguments: &DiceArgs, rng: &mut ThreadRng) -> () {
+pub fn roll_die(die: &Die, arguments: &DiceArgs, rng: &mut ThreadRng) {
     if die.modifier() == 0 {
         println!("{}d{}:", die.quantity(), die.size());
     } else {

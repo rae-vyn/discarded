@@ -5,7 +5,7 @@ use strum::EnumIter;
 use strum::IntoEnumIterator;
 // The Card Model
 #[derive(Debug, EnumIter, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum CardFaceType {
+pub enum FaceType {
     Number(u8),
     King,
     Queen,
@@ -16,7 +16,7 @@ pub enum CardFaceType {
 }
 
 #[derive(Debug, EnumIter, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum CardSuit {
+pub enum Suit {
     Hearts,
     Diamonds,
     Spades,
@@ -25,52 +25,53 @@ pub enum CardSuit {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum CardColor {
+pub enum Color {
     Red,
     Black,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Card {
-    pub face_value: CardFaceType,
-    pub suit: CardSuit,
-    color: CardColor,
+    pub face_value: FaceType,
+    pub suit: Suit,
+    color: Color,
 }
 
 impl Card {
-    pub fn new(value: CardFaceType, suit: CardSuit) -> Self {
+    #[must_use]
+    pub const fn new(value: FaceType, suit: Suit) -> Self {
         let color = match suit {
-            CardSuit::Hearts | CardSuit::Diamonds => CardColor::Red,
-            CardSuit::Spades | CardSuit::Clubs => CardColor::Black,
-            CardSuit::None => match value {
-                CardFaceType::BigJoker => CardColor::Black,
-                _ => CardColor::Red,
+            Suit::Hearts | Suit::Diamonds => Color::Red,
+            Suit::Spades | Suit::Clubs => Color::Black,
+            Suit::None => match value {
+                FaceType::BigJoker => Color::Black,
+                _ => Color::Red,
             },
         };
         Self {
             face_value: value,
             suit,
-            color: color,
+            color,
         }
     }
-    pub fn color(&self) -> CardColor {
+    pub fn color(&self) -> Color {
         self.color
     }
     pub fn num_val(&self) -> Option<u8> {
         match self.face_value {
-            CardFaceType::Number(x) => Some(x),
+            FaceType::Number(x) => Some(x),
             _ => None,
         }
     }
     pub fn string(&self) -> String {
         let face_as_string = match self.face_value {
-            CardFaceType::Number(x) => format!("{}", x),
-            CardFaceType::BigJoker => "Big Joker".to_string(),
-            CardFaceType::LittleJoker => "Little Joker".to_string(),
+            FaceType::Number(x) => format!("{}", x),
+            FaceType::BigJoker => "Big Joker".to_string(),
+            FaceType::LittleJoker => "Little Joker".to_string(),
             other => format!("{:?}", other),
         };
         match self.suit {
-            CardSuit::None => format!("{}", face_as_string),
+            Suit::None => format!("{}", face_as_string),
             _ => format!("{} of {:?}", face_as_string, self.suit),
         }
     }
@@ -96,30 +97,30 @@ impl Deck {
     }
     pub fn deck() -> Deck {
         let mut deck = Deck::new(vec![]);
-        for suit in CardSuit::iter().take(4) {
+        for suit in Suit::iter().take(4) {
             // All the numbers
             for i in 2..=10 {
-                deck.add(Card::new(CardFaceType::Number(i), suit));
+                deck.add(Card::new(FaceType::Number(i), suit));
             }
             // The big people
-            for face in CardFaceType::iter().skip(1).take(4) {
+            for face in FaceType::iter().skip(1).take(4) {
                 deck.add(Card::new(face, suit));
             }
         }
         // Add the two jokers
-        deck.add(Card::new(CardFaceType::BigJoker, CardSuit::None));
-        deck.add(Card::new(CardFaceType::LittleJoker, CardSuit::None));
+        deck.add(Card::new(FaceType::BigJoker, Suit::None));
+        deck.add(Card::new(FaceType::LittleJoker, Suit::None));
         deck
     }
     pub fn deck_no_jokers() -> Deck {
         let mut deck = Deck::new(vec![]);
-        for suit in CardSuit::iter().take(4) {
+        for suit in Suit::iter().take(4) {
             // All the numbers
             for i in 2..=10 {
-                deck.add(Card::new(CardFaceType::Number(i), suit));
+                deck.add(Card::new(FaceType::Number(i), suit));
             }
             // The big people
-            for face in CardFaceType::iter().skip(1).take(4) {
+            for face in FaceType::iter().skip(1).take(4) {
                 deck.add(Card::new(face, suit));
             }
         }
